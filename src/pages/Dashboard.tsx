@@ -218,16 +218,15 @@ const Overview = ({ plan, loading, grocery, setGrocery }: {
         ) : (
           <ul className="space-y-2">
             {top5.map((item) => (
-              <li key={item.id} className="flex items-center justify-between rounded-xl px-3 py-2 bg-white/[0.03] border border-white/5">
-                <span className={cn("text-sm", item.checked ? "text-dash-muted line-through" : "text-dash-foreground")}>{item.name}</span>
+              <li key={item.id} className="flex items-center justify-between rounded-2xl px-3 py-2.5 bg-white/[0.03] border border-white/5 hover:border-white/15 transition-all duration-200">
+                <span className={cn("text-sm transition-all duration-200", item.checked ? "text-dash-muted line-through" : "text-dash-foreground")}>{item.name}</span>
                 <button
                   onClick={() => toggle(item.id, !item.checked)}
-                  className={cn(
-                    "h-5 w-5 rounded-md grid place-items-center border transition-colors",
-                    item.checked ? "bg-gradient-brand border-transparent text-white" : "border-white/20 hover:border-white/40"
-                  )}
+                  aria-pressed={item.checked}
+                  className="check-box btn-press"
+                  data-checked={item.checked}
                 >
-                  {item.checked && <Check className="h-3 w-3" />}
+                  <Check className="h-3 w-3 check-icon" />
                 </button>
               </li>
             ))}
