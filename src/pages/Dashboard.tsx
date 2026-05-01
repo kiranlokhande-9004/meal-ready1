@@ -92,21 +92,21 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen dash-bg">
-      <div className="container mx-auto py-4 md:py-6">
-        <div className="grid grid-cols-12 gap-4">
+      <div className="container mx-auto py-6 md:py-8">
+        <div className="grid grid-cols-12 gap-6">
           {/* Sidebar */}
           <aside className={cn(
-            "col-span-12 lg:col-span-2 glass-card p-3 lg:sticky lg:top-4 lg:self-start lg:h-[calc(100vh-2rem)] flex flex-col",
+            "col-span-12 lg:col-span-2 glass-card p-4 lg:sticky lg:top-6 lg:self-start lg:h-[calc(100vh-3rem)] flex flex-col",
             !sidebarOpen && "hidden lg:flex"
           )}>
             <div className="px-2 py-3"><Logo glow /></div>
-            <nav className="flex flex-col gap-1 mt-2">
+            <nav className="flex flex-col gap-1 mt-4">
               {NAV.map((n) => (
                 <button
                   key={n.id}
                   onClick={() => { setSection(n.id); setSidebarOpen(false); }}
                   className={cn(
-                    "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all",
+                    "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200",
                     section === n.id
                       ? "bg-gradient-to-r from-white/15 to-white/5 text-dash-foreground border border-white/15 shadow-[inset_0_1px_0_hsl(0_0%_100%/0.1)]"
                       : "text-dash-muted hover:text-dash-foreground hover:bg-white/5"
@@ -117,10 +117,10 @@ const Dashboard = () => {
               ))}
             </nav>
             <div className="mt-auto pt-4 border-t border-white/10 flex items-center gap-3 px-2">
-              <div className="h-9 w-9 rounded-full bg-gradient-to-br from-neon-violet to-neon-pink ring-2 ring-white/20" />
+              <div className="h-9 w-9 rounded-full bg-gradient-to-br from-neon-emerald to-neon-teal ring-2 ring-white/20" />
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-dash-foreground truncate">{profileName}</p>
-                <button onClick={signOut} className="text-xs text-dash-muted hover:text-dash-foreground inline-flex items-center gap-1">
+                <button onClick={signOut} className="text-xs text-dash-muted hover:text-dash-foreground inline-flex items-center gap-1 transition-colors">
                   <LogOut className="h-3 w-3" /> Sign out
                 </button>
               </div>
@@ -128,25 +128,28 @@ const Dashboard = () => {
           </aside>
 
           {/* Main */}
-          <main className="col-span-12 lg:col-span-10 flex flex-col gap-4">
+          <main className="col-span-12 lg:col-span-10 flex flex-col gap-6">
             {/* Topbar */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <button className="lg:hidden h-9 w-9 grid place-items-center rounded-full glass-card text-dash-foreground"
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex items-center gap-3 min-w-0">
+                <button className="lg:hidden h-10 w-10 grid place-items-center rounded-full glass-card text-dash-foreground btn-press"
                   onClick={() => setSidebarOpen((o) => !o)}>
                   <Menu className="h-4 w-4" />
                 </button>
-                <h1 className="font-display text-2xl md:text-3xl font-bold text-dash-foreground">{titleMap[section]}</h1>
+                <div className="min-w-0">
+                  <h1 className="font-display text-2xl md:text-4xl font-bold text-dash-foreground tracking-tight truncate">{titleMap[section]}</h1>
+                  <p className="text-sm text-dash-muted mt-1 hidden sm:block">Plan smarter. Eat better. Powered by AI.</p>
+                </div>
               </div>
-              <div className="flex items-center gap-3">
-                <Button onClick={generate} disabled={generating} className="bg-gradient-brand hover:opacity-90 shadow-glow hidden sm:inline-flex">
+              <div className="flex items-center gap-3 shrink-0">
+                <Button onClick={generate} disabled={generating} className="bg-gradient-brand hover:opacity-95 shadow-glow btn-press hidden sm:inline-flex rounded-2xl h-11 px-5">
                   {generating ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Wand2 className="h-4 w-4 mr-2" />}
                   Regenerate week
                 </Button>
-                <button className="h-9 w-9 grid place-items-center rounded-full glass-card text-dash-muted">
+                <button className="h-10 w-10 grid place-items-center rounded-full glass-card text-dash-muted hover:text-dash-foreground btn-press">
                   <Mail className="h-4 w-4" />
                 </button>
-                <button className="relative h-9 w-9 grid place-items-center rounded-full glass-card text-dash-muted">
+                <button className="relative h-10 w-10 grid place-items-center rounded-full glass-card text-dash-muted hover:text-dash-foreground btn-press">
                   <Bell className="h-4 w-4" />
                   <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-neon-pink text-[10px] font-bold text-white grid place-items-center">2</span>
                 </button>
