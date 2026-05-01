@@ -504,29 +504,69 @@ const NutritionSection = ({ plan, loading }: { plan: MealPlanData | null; loadin
   const av = { calories: Math.round(avg.calories/n), protein: Math.round(avg.protein/n), carbs: Math.round(avg.carbs/n), fats: Math.round(avg.fats/n) };
   const max = Math.max(...plan.days.map((d) => d.nutrition.calories));
 
+  const macros = [
+    { key: "calories", label: "Calories", value: av.calories, unit: "kcal", goal: 2200, color: "from-neon-blue to-neon-teal", ring: "blue" as const },
+    { key: "protein",  label: "Protein",  value: av.protein,  unit: "g",    goal: 150,  color: "from-neon-violet to-neon-pink", ring: "violet" as const },
+    { key: "carbs",    label: "Carbs",    value: av.carbs,    unit: "g",    goal: 250,  color: "from-neon-emerald to-neon-teal", ring: "emerald" as const },
+    { key: "fats",     label: "Fats",     value: av.fats,     unit: "g",    goal: 80,   color: "from-neon-pink to-neon-violet", ring: "pink" as const },
+  ];
+
   return (
-    <div className="space-y-4">
-      <div className="glass-card p-6">
-        <p className="text-xs uppercase tracking-widest text-dash-muted font-semibold mb-4">Daily averages</p>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="flex justify-center"><NeonRing value={Math.min(100, (av.calories/2200)*100)} color="blue" label="Calories" sub={`${av.calories} kcal`} size={140} /></div>
-          <div className="flex justify-center"><NeonRing value={Math.min(100, (av.protein/150)*100)} color="violet" label="Protein" sub={`${av.protein}g`} size={140} /></div>
-          <div className="flex justify-center"><NeonRing value={Math.min(100, (av.carbs/250)*100)} color="emerald" label="Carbs" sub={`${av.carbs}g`} size={140} /></div>
-          <div className="flex justify-center"><NeonRing value={Math.min(100, (av.fats/80)*100)} color="pink" label="Fats" sub={`${av.fats}g`} size={140} /></div>
-        </div>
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        {macros.map((m, i) => {
+          const pct = Math.min(100, (m.value / m.goal) * 100);
+          return (
+            <div key={m.key} className="glass-card card-lift p-6 anim-fade-up" style={{ animationDelay: `${i*50}ms` }}>
+              <div className="flex items-center justify-between">
+                <p className="text-xs uppercase tracking-widest text-dash-muted font-semibold">{m.label}</p>
+                <span className="text-[10px] font-medium text-dash-muted px-2 py-0.5 rounded-full bg-white/5 border border-white/5">avg/day</span>
+              </div>
+              <p className="font-display text-3xl font-bold text-dash-foreground mt-3">
+                {m.value}<span className="text-base font-medium text-dash-muted ml-1">{m.unit}</span>
+              </p>
+              <div className="mt-4 h-2 rounded-full bg-white/5 overflow-hidden">
+                <div className={cn("h-full rounded-full bg-gradient-to-r transition-all duration-700", m.color)} style={{ width: `${pct}%` }} />
+              </div>
+              <p className="text-[11px] text-dash-muted mt-2">Goal {m.goal}{m.unit} · {Math.round(pct)}%</p>
+            </div>
+          );
+        })}
       </div>
-      <div className="glass-card p-6">
-        <p className="text-xs uppercase tracking-widest text-dash-muted font-semibold mb-4">Calories per day</p>
-        <div className="flex items-end gap-3 h-48">
-          {plan.days.map((d) => (
-            <div key={d.day} className="flex-1 flex flex-col items-center gap-2">
-              <div
-                className="w-full rounded-t-lg bg-gradient-to-t from-neon-blue to-neon-teal transition-all duration-500"
-                style={{ height: `${(d.nutrition.calories / max) * 100}%`, minHeight: 6 }}
-              />
-              <span className="text-[10px] text-dash-muted">{d.day.slice(0,3)}</span>
+
+      <div className="glass-card p-6 md:p-7">
+        <p className="text-xs uppercase tracking-widest text-dash-muted font-semibold mb-4">Daily targets</p>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {macros.map((m) => (
+            <div key={m.key} className="flex justify-center">
+              <NeonRing value={Math.min(100, (m.value/m.goal)*100)} color={m.ring} label={m.label} sub={`${m.value}${m.unit === "kcal" ? " kcal" : m.unit}`} size={140} />
             </div>
           ))}
+        </div>
+      </div>
+
+      <div className="glass-card p-6 md:p-7">
+        <div className="flex items-end justify-between mb-5">
+          <div>
+            <p className="text-xs uppercase tracking-widest text-dash-muted font-semibold">Calories per day</p>
+            <p className="font-display text-lg font-bold text-dash-foreground mt-1">Weekly intake overview</p>
+          </div>
+          <p className="text-xs text-dash-muted">peak <span className="text-dash-foreground font-semibold">{max} kcal</span></p>
+        </div>
+        <div className="flex items-end gap-3 h-56">
+          {plan.days.map((d, i) => {
+            const h = (d.nutrition.calories / max) * 100;
+            return (
+              <div key={d.day} className="flex-1 flex flex-col items-center gap-2 group">
+                <span className="text-[10px] font-semibold text-dash-foreground opacity-0 group-hover:opacity-100 transition-opacity">{d.nutrition.calories}</span>
+                <div
+                  className="w-full rounded-t-xl bg-gradient-to-t from-neon-emerald via-neon-teal to-neon-blue transition-all duration-700 hover:opacity-90 shadow-[0_-8px_24px_-8px_hsl(178_90%_50%/0.5)]"
+                  style={{ height: `${h}%`, minHeight: 8, animationDelay: `${i*60}ms` }}
+                />
+                <span className="text-[11px] text-dash-muted font-medium">{d.day.slice(0,3)}</span>
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>
