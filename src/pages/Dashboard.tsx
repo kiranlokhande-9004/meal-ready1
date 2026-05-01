@@ -426,21 +426,30 @@ const FamilySection = ({ family, setFamily, userId }: {
   };
 
   return (
-    <div>
-      <div className="flex justify-end mb-4">
+    <div className="space-y-6">
+      <div className="glass-card p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <p className="text-xs uppercase tracking-widest text-dash-muted font-semibold">Household</p>
+          <p className="font-display text-xl font-bold text-dash-foreground mt-1">
+            {family.length} {family.length === 1 ? "member" : "members"}
+          </p>
+          <p className="text-sm text-dash-muted mt-1">AI tailors meals around everyone's diet & allergies.</p>
+        </div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button className="bg-gradient-brand hover:opacity-90 shadow-glow"><Plus className="h-4 w-4 mr-1" /> Add member</Button>
+            <Button className="bg-gradient-brand hover:opacity-95 shadow-glow btn-press rounded-2xl h-11 px-5">
+              <Plus className="h-4 w-4 mr-1.5" /> Add member
+            </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader><DialogTitle>Add family member</DialogTitle></DialogHeader>
-            <div className="space-y-3">
-              <div><Label>Name</Label><Input value={draft.name} maxLength={80} onChange={(e)=>setDraft({...draft, name:e.target.value})} /></div>
-              <div><Label>Age</Label><Input type="number" min={0} max={120} value={draft.age} onChange={(e)=>setDraft({...draft, age:e.target.value})} /></div>
-              <div><Label>Dietary preferences (comma-separated)</Label><Input placeholder="vegetarian, gluten-free" value={draft.dietary} onChange={(e)=>setDraft({...draft, dietary:e.target.value})} /></div>
-              <div><Label>Allergies (comma-separated)</Label><Input placeholder="peanuts, shellfish" value={draft.allergies} onChange={(e)=>setDraft({...draft, allergies:e.target.value})} /></div>
+            <div className="space-y-4 pt-2">
+              <div className="space-y-1.5"><Label>Name</Label><Input value={draft.name} maxLength={80} onChange={(e)=>setDraft({...draft, name:e.target.value})} /></div>
+              <div className="space-y-1.5"><Label>Age</Label><Input type="number" min={0} max={120} value={draft.age} onChange={(e)=>setDraft({...draft, age:e.target.value})} /></div>
+              <div className="space-y-1.5"><Label>Dietary preferences <span className="text-muted-foreground font-normal">(comma-separated)</span></Label><Input placeholder="vegetarian, gluten-free" value={draft.dietary} onChange={(e)=>setDraft({...draft, dietary:e.target.value})} /></div>
+              <div className="space-y-1.5"><Label>Allergies <span className="text-muted-foreground font-normal">(comma-separated)</span></Label><Input placeholder="peanuts, shellfish" value={draft.allergies} onChange={(e)=>setDraft({...draft, allergies:e.target.value})} /></div>
             </div>
-            <DialogFooter><Button onClick={add} className="bg-gradient-brand hover:opacity-90">Add</Button></DialogFooter>
+            <DialogFooter><Button onClick={add} className="bg-gradient-brand hover:opacity-95 btn-press">Add member</Button></DialogFooter>
           </DialogContent>
         </Dialog>
       </div>
