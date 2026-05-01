@@ -254,24 +254,66 @@ const Overview = ({ plan, loading, grocery, setGrocery }: {
 const MealsSection = ({ plan, loading, onGenerate, generating }: {
   plan: MealPlanData | null; loading: boolean; onGenerate: () => void; generating: boolean;
 }) => {
-  if (loading) return <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">{Array.from({length:6}).map((_,i)=><Skeleton key={i} className="h-72 bg-white/5 rounded-2xl"/>)}</div>;
+  if (loading) return <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">{Array.from({length:6}).map((_,i)=><Skeleton key={i} className="h-72 bg-white/5 rounded-2xl"/>)}</div>;
   if (!plan) return null;
+  const slotMeta: Record<string, { label: string; color: string }> = {
+    breakfast: { label: "Breakfast", color: "bg-neon-emerald/15 text-neon-emerald border-neon-emerald/25" },
+    lunch:     { label: "Lunch",     color: "bg-neon-teal/15 text-neon-teal border-neon-teal/25" },
+    dinner:    { label: "Dinner",    color: "bg-neon-violet/15 text-neon-violet border-neon-violet/25" },
+  };
   return (
-    <div>
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-        {plan.days.map((d, i) => (
-          <div key={d.day} className="glass-card p-5 anim-fade-up" style={{ animationDelay: `${i*40}ms` }}>
-            <p className="font-display text-lg font-bold text-dash-foreground">{d.day}</p>
-            <p className="text-xs text-dash-muted">{d.nutrition.calories} kcal · {d.nutrition.protein}g protein</p>
-            <div className="grid grid-cols-3 gap-2 mt-3">
-              <MealCard meal={d.breakfast} slot="B" compact />
-              <MealCard meal={d.lunch} slot="L" compact />
-              <MealCard meal={d.dinner} slot="D" compact />
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+        {plan.days.map((d, i) => {
+          const perMeal = Math.round(d.nutrition.calories / 3);
+          return (
+            <div key={d.day} className="glass-card card-lift p-6 anim-fade-up" style={{ animationDelay: `${i*40}ms` }}>
+              <div className="flex items-start justify-between mb-4">
+                <div>
+                  <p className="text-[11px] uppercase tracking-widest text-dash-muted font-semibold">Day {i+1}</p>
+                  <p className="font-display text-xl font-bold text-dash-foreground mt-0.5">{d.day}</p>
+                </div>
+                <span className="text-[11px] font-semibold px-2.5 py-1 rounded-full bg-gradient-brand text-white shadow-[0_0_20px_hsl(178_90%_50%/0.35)]">
+                  {d.nutrition.calories} kcal
+                </span>
+              </div>
+
+              <div className="space-y-2.5">
+                {(["breakfast","lunch","dinner"] as const).map((slot) => {
+                  const m = d[slot];
+                  const meta = slotMeta[slot];
+                  return (
+                    <div key={slot} className="meal-pill">
+                      <img
+                        src={getMealImage(m.image_key)}
+                        alt={m.name}
+                        loading="lazy"
+                        className="h-11 w-11 rounded-xl object-cover ring-1 ring-white/10 shrink-0"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <span className={cn("text-[10px] font-semibold px-1.5 py-0.5 rounded-md border uppercase tracking-wider", meta.color)}>
+                          {meta.label}
+                        </span>
+                        <p className="text-sm font-medium text-dash-foreground truncate mt-1">{m.name}</p>
+                      </div>
+                      <span className="text-[11px] font-medium text-dash-muted px-2 py-1 rounded-full bg-white/[0.04] border border-white/5 shrink-0">
+                        ~{perMeal} kcal
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="mt-4 flex items-center gap-3 pt-3 border-t border-white/5">
+                <span className="text-[11px] text-dash-muted">Protein <span className="text-dash-foreground font-semibold">{d.nutrition.protein}g</span></span>
+                <span className="text-[11px] text-dash-muted">Carbs <span className="text-dash-foreground font-semibold">{d.nutrition.carbs}g</span></span>
+                <span className="text-[11px] text-dash-muted">Fats <span className="text-dash-foreground font-semibold">{d.nutrition.fats}g</span></span>
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
-      <Button onClick={onGenerate} disabled={generating} className="bg-gradient-brand hover:opacity-90 shadow-glow mt-6 sm:hidden w-full">
+      <Button onClick={onGenerate} disabled={generating} className="bg-gradient-brand hover:opacity-95 shadow-glow btn-press sm:hidden w-full h-12 rounded-2xl">
         {generating ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Wand2 className="h-4 w-4 mr-2" />}
         Regenerate week
       </Button>
