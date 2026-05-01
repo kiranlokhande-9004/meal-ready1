@@ -14,6 +14,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { SAMPLE_PLAN, type MealPlanData } from "@/lib/meal-data";
+import { getMealImage } from "@/lib/meal-images";
 import {
   LayoutDashboard, Utensils, ShoppingBasket, Users, Activity,
   Settings as SettingsIcon, Bell, Mail, LogOut, Wand2, Plus, Trash2, Check, Loader2, Menu,
@@ -92,21 +93,21 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen dash-bg">
-      <div className="container mx-auto py-4 md:py-6">
-        <div className="grid grid-cols-12 gap-4">
+      <div className="container mx-auto py-6 md:py-8">
+        <div className="grid grid-cols-12 gap-6">
           {/* Sidebar */}
           <aside className={cn(
-            "col-span-12 lg:col-span-2 glass-card p-3 lg:sticky lg:top-4 lg:self-start lg:h-[calc(100vh-2rem)] flex flex-col",
+            "col-span-12 lg:col-span-2 glass-card p-4 lg:sticky lg:top-6 lg:self-start lg:h-[calc(100vh-3rem)] flex flex-col",
             !sidebarOpen && "hidden lg:flex"
           )}>
             <div className="px-2 py-3"><Logo glow /></div>
-            <nav className="flex flex-col gap-1 mt-2">
+            <nav className="flex flex-col gap-1 mt-4">
               {NAV.map((n) => (
                 <button
                   key={n.id}
                   onClick={() => { setSection(n.id); setSidebarOpen(false); }}
                   className={cn(
-                    "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all",
+                    "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200",
                     section === n.id
                       ? "bg-gradient-to-r from-white/15 to-white/5 text-dash-foreground border border-white/15 shadow-[inset_0_1px_0_hsl(0_0%_100%/0.1)]"
                       : "text-dash-muted hover:text-dash-foreground hover:bg-white/5"
@@ -117,10 +118,10 @@ const Dashboard = () => {
               ))}
             </nav>
             <div className="mt-auto pt-4 border-t border-white/10 flex items-center gap-3 px-2">
-              <div className="h-9 w-9 rounded-full bg-gradient-to-br from-neon-violet to-neon-pink ring-2 ring-white/20" />
+              <div className="h-9 w-9 rounded-full bg-gradient-to-br from-neon-emerald to-neon-teal ring-2 ring-white/20" />
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-dash-foreground truncate">{profileName}</p>
-                <button onClick={signOut} className="text-xs text-dash-muted hover:text-dash-foreground inline-flex items-center gap-1">
+                <button onClick={signOut} className="text-xs text-dash-muted hover:text-dash-foreground inline-flex items-center gap-1 transition-colors">
                   <LogOut className="h-3 w-3" /> Sign out
                 </button>
               </div>
@@ -128,25 +129,28 @@ const Dashboard = () => {
           </aside>
 
           {/* Main */}
-          <main className="col-span-12 lg:col-span-10 flex flex-col gap-4">
+          <main className="col-span-12 lg:col-span-10 flex flex-col gap-6">
             {/* Topbar */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <button className="lg:hidden h-9 w-9 grid place-items-center rounded-full glass-card text-dash-foreground"
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex items-center gap-3 min-w-0">
+                <button className="lg:hidden h-10 w-10 grid place-items-center rounded-full glass-card text-dash-foreground btn-press"
                   onClick={() => setSidebarOpen((o) => !o)}>
                   <Menu className="h-4 w-4" />
                 </button>
-                <h1 className="font-display text-2xl md:text-3xl font-bold text-dash-foreground">{titleMap[section]}</h1>
+                <div className="min-w-0">
+                  <h1 className="font-display text-2xl md:text-4xl font-bold text-dash-foreground tracking-tight truncate">{titleMap[section]}</h1>
+                  <p className="text-sm text-dash-muted mt-1 hidden sm:block">Plan smarter. Eat better. Powered by AI.</p>
+                </div>
               </div>
-              <div className="flex items-center gap-3">
-                <Button onClick={generate} disabled={generating} className="bg-gradient-brand hover:opacity-90 shadow-glow hidden sm:inline-flex">
+              <div className="flex items-center gap-3 shrink-0">
+                <Button onClick={generate} disabled={generating} className="bg-gradient-brand hover:opacity-95 shadow-glow btn-press hidden sm:inline-flex rounded-2xl h-11 px-5">
                   {generating ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Wand2 className="h-4 w-4 mr-2" />}
                   Regenerate week
                 </Button>
-                <button className="h-9 w-9 grid place-items-center rounded-full glass-card text-dash-muted">
+                <button className="h-10 w-10 grid place-items-center rounded-full glass-card text-dash-muted hover:text-dash-foreground btn-press">
                   <Mail className="h-4 w-4" />
                 </button>
-                <button className="relative h-9 w-9 grid place-items-center rounded-full glass-card text-dash-muted">
+                <button className="relative h-10 w-10 grid place-items-center rounded-full glass-card text-dash-muted hover:text-dash-foreground btn-press">
                   <Bell className="h-4 w-4" />
                   <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-neon-pink text-[10px] font-bold text-white grid place-items-center">2</span>
                 </button>
@@ -191,7 +195,7 @@ const Overview = ({ plan, loading, grocery, setGrocery }: {
 
   return (
     <div className="grid grid-cols-12 gap-4">
-      <div className="col-span-12 lg:col-span-8 glass-card p-5 anim-fade-up">
+      <div className="col-span-12 lg:col-span-8 glass-card card-lift p-6 anim-fade-up">
         <div className="flex items-center justify-between mb-4">
           <p className="text-xs uppercase tracking-widest text-dash-muted font-semibold">My weekly meals</p>
           <span className="text-dash-muted">›</span>
@@ -207,23 +211,22 @@ const Overview = ({ plan, loading, grocery, setGrocery }: {
         )}
       </div>
 
-      <div className="col-span-12 lg:col-span-4 glass-card p-5 anim-fade-up [animation-delay:80ms]">
+      <div className="col-span-12 lg:col-span-4 glass-card card-lift p-6 anim-fade-up [animation-delay:80ms]">
         <p className="text-xs uppercase tracking-widest text-dash-muted font-semibold mb-3">Grocery list</p>
         {top5.length === 0 ? (
           <p className="text-sm text-dash-muted">Generate a plan to populate your list.</p>
         ) : (
           <ul className="space-y-2">
             {top5.map((item) => (
-              <li key={item.id} className="flex items-center justify-between rounded-xl px-3 py-2 bg-white/[0.03] border border-white/5">
-                <span className={cn("text-sm", item.checked ? "text-dash-muted line-through" : "text-dash-foreground")}>{item.name}</span>
+              <li key={item.id} className="flex items-center justify-between rounded-2xl px-3 py-2.5 bg-white/[0.03] border border-white/5 hover:border-white/15 transition-all duration-200">
+                <span className={cn("text-sm transition-all duration-200", item.checked ? "text-dash-muted line-through" : "text-dash-foreground")}>{item.name}</span>
                 <button
                   onClick={() => toggle(item.id, !item.checked)}
-                  className={cn(
-                    "h-5 w-5 rounded-md grid place-items-center border transition-colors",
-                    item.checked ? "bg-gradient-brand border-transparent text-white" : "border-white/20 hover:border-white/40"
-                  )}
+                  aria-pressed={item.checked}
+                  className="check-box btn-press"
+                  data-checked={item.checked}
                 >
-                  {item.checked && <Check className="h-3 w-3" />}
+                  <Check className="h-3 w-3 check-icon" />
                 </button>
               </li>
             ))}
@@ -231,7 +234,7 @@ const Overview = ({ plan, loading, grocery, setGrocery }: {
         )}
       </div>
 
-      <div className="col-span-12 glass-card p-5 anim-fade-up [animation-delay:160ms]">
+      <div className="col-span-12 glass-card card-lift p-6 anim-fade-up [animation-delay:160ms]">
         <p className="text-xs uppercase tracking-widest text-dash-muted font-semibold mb-4">Nutrition stats</p>
         {!totals ? (
           <Skeleton className="h-32 rounded-2xl bg-white/5" />
@@ -251,24 +254,66 @@ const Overview = ({ plan, loading, grocery, setGrocery }: {
 const MealsSection = ({ plan, loading, onGenerate, generating }: {
   plan: MealPlanData | null; loading: boolean; onGenerate: () => void; generating: boolean;
 }) => {
-  if (loading) return <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">{Array.from({length:6}).map((_,i)=><Skeleton key={i} className="h-72 bg-white/5 rounded-2xl"/>)}</div>;
+  if (loading) return <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">{Array.from({length:6}).map((_,i)=><Skeleton key={i} className="h-72 bg-white/5 rounded-2xl"/>)}</div>;
   if (!plan) return null;
+  const slotMeta: Record<string, { label: string; color: string }> = {
+    breakfast: { label: "Breakfast", color: "bg-neon-emerald/15 text-neon-emerald border-neon-emerald/25" },
+    lunch:     { label: "Lunch",     color: "bg-neon-teal/15 text-neon-teal border-neon-teal/25" },
+    dinner:    { label: "Dinner",    color: "bg-neon-violet/15 text-neon-violet border-neon-violet/25" },
+  };
   return (
-    <div>
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-        {plan.days.map((d, i) => (
-          <div key={d.day} className="glass-card p-5 anim-fade-up" style={{ animationDelay: `${i*40}ms` }}>
-            <p className="font-display text-lg font-bold text-dash-foreground">{d.day}</p>
-            <p className="text-xs text-dash-muted">{d.nutrition.calories} kcal · {d.nutrition.protein}g protein</p>
-            <div className="grid grid-cols-3 gap-2 mt-3">
-              <MealCard meal={d.breakfast} slot="B" compact />
-              <MealCard meal={d.lunch} slot="L" compact />
-              <MealCard meal={d.dinner} slot="D" compact />
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+        {plan.days.map((d, i) => {
+          const perMeal = Math.round(d.nutrition.calories / 3);
+          return (
+            <div key={d.day} className="glass-card card-lift p-6 anim-fade-up" style={{ animationDelay: `${i*40}ms` }}>
+              <div className="flex items-start justify-between mb-4">
+                <div>
+                  <p className="text-[11px] uppercase tracking-widest text-dash-muted font-semibold">Day {i+1}</p>
+                  <p className="font-display text-xl font-bold text-dash-foreground mt-0.5">{d.day}</p>
+                </div>
+                <span className="text-[11px] font-semibold px-2.5 py-1 rounded-full bg-gradient-brand text-white shadow-[0_0_20px_hsl(178_90%_50%/0.35)]">
+                  {d.nutrition.calories} kcal
+                </span>
+              </div>
+
+              <div className="space-y-2.5">
+                {(["breakfast","lunch","dinner"] as const).map((slot) => {
+                  const m = d[slot];
+                  const meta = slotMeta[slot];
+                  return (
+                    <div key={slot} className="meal-pill">
+                      <img
+                        src={getMealImage(m.image_key)}
+                        alt={m.name}
+                        loading="lazy"
+                        className="h-11 w-11 rounded-xl object-cover ring-1 ring-white/10 shrink-0"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <span className={cn("text-[10px] font-semibold px-1.5 py-0.5 rounded-md border uppercase tracking-wider", meta.color)}>
+                          {meta.label}
+                        </span>
+                        <p className="text-sm font-medium text-dash-foreground truncate mt-1">{m.name}</p>
+                      </div>
+                      <span className="text-[11px] font-medium text-dash-muted px-2 py-1 rounded-full bg-white/[0.04] border border-white/5 shrink-0">
+                        ~{perMeal} kcal
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="mt-4 flex items-center gap-3 pt-3 border-t border-white/5">
+                <span className="text-[11px] text-dash-muted">Protein <span className="text-dash-foreground font-semibold">{d.nutrition.protein}g</span></span>
+                <span className="text-[11px] text-dash-muted">Carbs <span className="text-dash-foreground font-semibold">{d.nutrition.carbs}g</span></span>
+                <span className="text-[11px] text-dash-muted">Fats <span className="text-dash-foreground font-semibold">{d.nutrition.fats}g</span></span>
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
-      <Button onClick={onGenerate} disabled={generating} className="bg-gradient-brand hover:opacity-90 shadow-glow mt-6 sm:hidden w-full">
+      <Button onClick={onGenerate} disabled={generating} className="bg-gradient-brand hover:opacity-95 shadow-glow btn-press sm:hidden w-full h-12 rounded-2xl">
         {generating ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Wand2 className="h-4 w-4 mr-2" />}
         Regenerate week
       </Button>
@@ -291,43 +336,60 @@ const GrocerySection = ({ items, setItems }: { items: GroceryRow[]; setItems: (g
   };
 
   return (
-    <div className="glass-card p-6">
-      <div className="flex items-center justify-between mb-2">
-        <p className="text-xs uppercase tracking-widest text-dash-muted font-semibold">Progress</p>
-        <p className="text-sm text-dash-foreground font-medium">{done}/{items.length}</p>
-      </div>
-      <Progress value={pct} className="h-2 bg-white/5" />
-
-      {items.length === 0 ? (
-        <p className="text-sm text-dash-muted mt-6">Generate a meal plan to build your grocery list.</p>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-          {Object.entries(grouped).map(([cat, list]) => (
-            <div key={cat}>
-              <p className="text-xs uppercase tracking-widest text-neon-teal font-semibold mb-3">{cat}</p>
-              <ul className="space-y-2">
-                {list.map((it) => (
-                  <li key={it.id} className="flex items-center justify-between rounded-xl px-4 py-3 bg-white/[0.03] border border-white/5 hover:border-white/15 transition-colors">
-                    <div>
-                      <p className={cn("text-sm font-medium", it.checked ? "text-dash-muted line-through" : "text-dash-foreground")}>{it.name}</p>
-                      {it.quantity && <p className="text-xs text-dash-muted">{it.quantity}</p>}
-                    </div>
-                    <button
-                      onClick={() => toggle(it.id, !it.checked)}
-                      className={cn(
-                        "h-6 w-6 rounded-md grid place-items-center border transition-all",
-                        it.checked ? "bg-gradient-brand border-transparent text-white scale-110" : "border-white/20 hover:border-white/40"
-                      )}
-                    >
-                      {it.checked && <Check className="h-3.5 w-3.5" />}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+    <div className="space-y-6">
+      <div className="glass-card p-6 md:p-7">
+        <div className="flex items-center justify-between mb-3">
+          <div>
+            <p className="text-xs uppercase tracking-widest text-dash-muted font-semibold">Shopping progress</p>
+            <p className="font-display text-2xl font-bold text-dash-foreground mt-1">
+              {done}<span className="text-dash-muted text-base font-medium"> / {items.length} items</span>
+            </p>
+          </div>
+          <div className="text-right">
+            <p className="font-display text-3xl font-bold text-gradient-brand">{Math.round(pct)}%</p>
+            <p className="text-[11px] text-dash-muted uppercase tracking-widest">complete</p>
+          </div>
         </div>
-      )}
+        <Progress value={pct} className="h-2.5 bg-white/5 [&>div]:bg-gradient-brand" />
+      </div>
+
+      <div className="glass-card p-6 md:p-7">
+        {items.length === 0 ? (
+          <p className="text-sm text-dash-muted">Generate a meal plan to build your grocery list.</p>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-7">
+            {Object.entries(grouped).map(([cat, list]) => {
+              const catDone = list.filter((x) => x.checked).length;
+              return (
+                <div key={cat}>
+                  <div className="flex items-center justify-between mb-3">
+                    <p className="text-xs uppercase tracking-widest text-neon-teal font-semibold">{cat}</p>
+                    <span className="text-[11px] text-dash-muted font-medium">{catDone}/{list.length}</span>
+                  </div>
+                  <ul className="space-y-2">
+                    {list.map((it) => (
+                      <li key={it.id} className="flex items-center justify-between rounded-2xl px-4 py-3 bg-white/[0.03] border border-white/5 hover:border-white/15 hover:bg-white/[0.05] transition-all duration-200">
+                        <div className="min-w-0">
+                          <p className={cn("text-sm font-medium transition-all duration-200", it.checked ? "text-dash-muted line-through" : "text-dash-foreground")}>{it.name}</p>
+                          {it.quantity && <p className="text-xs text-dash-muted mt-0.5">{it.quantity}</p>}
+                        </div>
+                        <button
+                          onClick={() => toggle(it.id, !it.checked)}
+                          aria-pressed={it.checked}
+                          className="check-box btn-press"
+                          data-checked={it.checked}
+                        >
+                          <Check className="h-3 w-3 check-icon" />
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
@@ -363,21 +425,30 @@ const FamilySection = ({ family, setFamily, userId }: {
   };
 
   return (
-    <div>
-      <div className="flex justify-end mb-4">
+    <div className="space-y-6">
+      <div className="glass-card p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <p className="text-xs uppercase tracking-widest text-dash-muted font-semibold">Household</p>
+          <p className="font-display text-xl font-bold text-dash-foreground mt-1">
+            {family.length} {family.length === 1 ? "member" : "members"}
+          </p>
+          <p className="text-sm text-dash-muted mt-1">AI tailors meals around everyone's diet & allergies.</p>
+        </div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button className="bg-gradient-brand hover:opacity-90 shadow-glow"><Plus className="h-4 w-4 mr-1" /> Add member</Button>
+            <Button className="bg-gradient-brand hover:opacity-95 shadow-glow btn-press rounded-2xl h-11 px-5">
+              <Plus className="h-4 w-4 mr-1.5" /> Add member
+            </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader><DialogTitle>Add family member</DialogTitle></DialogHeader>
-            <div className="space-y-3">
-              <div><Label>Name</Label><Input value={draft.name} maxLength={80} onChange={(e)=>setDraft({...draft, name:e.target.value})} /></div>
-              <div><Label>Age</Label><Input type="number" min={0} max={120} value={draft.age} onChange={(e)=>setDraft({...draft, age:e.target.value})} /></div>
-              <div><Label>Dietary preferences (comma-separated)</Label><Input placeholder="vegetarian, gluten-free" value={draft.dietary} onChange={(e)=>setDraft({...draft, dietary:e.target.value})} /></div>
-              <div><Label>Allergies (comma-separated)</Label><Input placeholder="peanuts, shellfish" value={draft.allergies} onChange={(e)=>setDraft({...draft, allergies:e.target.value})} /></div>
+            <div className="space-y-4 pt-2">
+              <div className="space-y-1.5"><Label>Name</Label><Input value={draft.name} maxLength={80} onChange={(e)=>setDraft({...draft, name:e.target.value})} /></div>
+              <div className="space-y-1.5"><Label>Age</Label><Input type="number" min={0} max={120} value={draft.age} onChange={(e)=>setDraft({...draft, age:e.target.value})} /></div>
+              <div className="space-y-1.5"><Label>Dietary preferences <span className="text-muted-foreground font-normal">(comma-separated)</span></Label><Input placeholder="vegetarian, gluten-free" value={draft.dietary} onChange={(e)=>setDraft({...draft, dietary:e.target.value})} /></div>
+              <div className="space-y-1.5"><Label>Allergies <span className="text-muted-foreground font-normal">(comma-separated)</span></Label><Input placeholder="peanuts, shellfish" value={draft.allergies} onChange={(e)=>setDraft({...draft, allergies:e.target.value})} /></div>
             </div>
-            <DialogFooter><Button onClick={add} className="bg-gradient-brand hover:opacity-90">Add</Button></DialogFooter>
+            <DialogFooter><Button onClick={add} className="bg-gradient-brand hover:opacity-95 btn-press">Add member</Button></DialogFooter>
           </DialogContent>
         </Dialog>
       </div>
@@ -391,7 +462,7 @@ const FamilySection = ({ family, setFamily, userId }: {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {family.map((m) => (
-            <div key={m.id} className="glass-card p-5 anim-pop">
+            <div key={m.id} className="glass-card card-lift p-5 anim-pop">
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
                   <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-neon-emerald to-neon-teal grid place-items-center text-white font-bold text-lg">
@@ -441,29 +512,69 @@ const NutritionSection = ({ plan, loading }: { plan: MealPlanData | null; loadin
   const av = { calories: Math.round(avg.calories/n), protein: Math.round(avg.protein/n), carbs: Math.round(avg.carbs/n), fats: Math.round(avg.fats/n) };
   const max = Math.max(...plan.days.map((d) => d.nutrition.calories));
 
+  const macros = [
+    { key: "calories", label: "Calories", value: av.calories, unit: "kcal", goal: 2200, color: "from-neon-blue to-neon-teal", ring: "blue" as const },
+    { key: "protein",  label: "Protein",  value: av.protein,  unit: "g",    goal: 150,  color: "from-neon-violet to-neon-pink", ring: "violet" as const },
+    { key: "carbs",    label: "Carbs",    value: av.carbs,    unit: "g",    goal: 250,  color: "from-neon-emerald to-neon-teal", ring: "emerald" as const },
+    { key: "fats",     label: "Fats",     value: av.fats,     unit: "g",    goal: 80,   color: "from-neon-pink to-neon-violet", ring: "pink" as const },
+  ];
+
   return (
-    <div className="space-y-4">
-      <div className="glass-card p-6">
-        <p className="text-xs uppercase tracking-widest text-dash-muted font-semibold mb-4">Daily averages</p>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="flex justify-center"><NeonRing value={Math.min(100, (av.calories/2200)*100)} color="blue" label="Calories" sub={`${av.calories} kcal`} size={140} /></div>
-          <div className="flex justify-center"><NeonRing value={Math.min(100, (av.protein/150)*100)} color="violet" label="Protein" sub={`${av.protein}g`} size={140} /></div>
-          <div className="flex justify-center"><NeonRing value={Math.min(100, (av.carbs/250)*100)} color="emerald" label="Carbs" sub={`${av.carbs}g`} size={140} /></div>
-          <div className="flex justify-center"><NeonRing value={Math.min(100, (av.fats/80)*100)} color="pink" label="Fats" sub={`${av.fats}g`} size={140} /></div>
-        </div>
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        {macros.map((m, i) => {
+          const pct = Math.min(100, (m.value / m.goal) * 100);
+          return (
+            <div key={m.key} className="glass-card card-lift p-6 anim-fade-up" style={{ animationDelay: `${i*50}ms` }}>
+              <div className="flex items-center justify-between">
+                <p className="text-xs uppercase tracking-widest text-dash-muted font-semibold">{m.label}</p>
+                <span className="text-[10px] font-medium text-dash-muted px-2 py-0.5 rounded-full bg-white/5 border border-white/5">avg/day</span>
+              </div>
+              <p className="font-display text-3xl font-bold text-dash-foreground mt-3">
+                {m.value}<span className="text-base font-medium text-dash-muted ml-1">{m.unit}</span>
+              </p>
+              <div className="mt-4 h-2 rounded-full bg-white/5 overflow-hidden">
+                <div className={cn("h-full rounded-full bg-gradient-to-r transition-all duration-700", m.color)} style={{ width: `${pct}%` }} />
+              </div>
+              <p className="text-[11px] text-dash-muted mt-2">Goal {m.goal}{m.unit} · {Math.round(pct)}%</p>
+            </div>
+          );
+        })}
       </div>
-      <div className="glass-card p-6">
-        <p className="text-xs uppercase tracking-widest text-dash-muted font-semibold mb-4">Calories per day</p>
-        <div className="flex items-end gap-3 h-48">
-          {plan.days.map((d) => (
-            <div key={d.day} className="flex-1 flex flex-col items-center gap-2">
-              <div
-                className="w-full rounded-t-lg bg-gradient-to-t from-neon-blue to-neon-teal transition-all duration-500"
-                style={{ height: `${(d.nutrition.calories / max) * 100}%`, minHeight: 6 }}
-              />
-              <span className="text-[10px] text-dash-muted">{d.day.slice(0,3)}</span>
+
+      <div className="glass-card p-6 md:p-7">
+        <p className="text-xs uppercase tracking-widest text-dash-muted font-semibold mb-4">Daily targets</p>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {macros.map((m) => (
+            <div key={m.key} className="flex justify-center">
+              <NeonRing value={Math.min(100, (m.value/m.goal)*100)} color={m.ring} label={m.label} sub={`${m.value}${m.unit === "kcal" ? " kcal" : m.unit}`} size={140} />
             </div>
           ))}
+        </div>
+      </div>
+
+      <div className="glass-card p-6 md:p-7">
+        <div className="flex items-end justify-between mb-5">
+          <div>
+            <p className="text-xs uppercase tracking-widest text-dash-muted font-semibold">Calories per day</p>
+            <p className="font-display text-lg font-bold text-dash-foreground mt-1">Weekly intake overview</p>
+          </div>
+          <p className="text-xs text-dash-muted">peak <span className="text-dash-foreground font-semibold">{max} kcal</span></p>
+        </div>
+        <div className="flex items-end gap-3 h-56">
+          {plan.days.map((d, i) => {
+            const h = (d.nutrition.calories / max) * 100;
+            return (
+              <div key={d.day} className="flex-1 flex flex-col items-center gap-2 group">
+                <span className="text-[10px] font-semibold text-dash-foreground opacity-0 group-hover:opacity-100 transition-opacity">{d.nutrition.calories}</span>
+                <div
+                  className="w-full rounded-t-xl bg-gradient-to-t from-neon-emerald via-neon-teal to-neon-blue transition-all duration-700 hover:opacity-90 shadow-[0_-8px_24px_-8px_hsl(178_90%_50%/0.5)]"
+                  style={{ height: `${h}%`, minHeight: 8, animationDelay: `${i*60}ms` }}
+                />
+                <span className="text-[11px] text-dash-muted font-medium">{d.day.slice(0,3)}</span>
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>

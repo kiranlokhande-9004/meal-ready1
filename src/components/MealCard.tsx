@@ -6,7 +6,7 @@ export const MealCard = ({
   meal, slot, className, compact = false,
 }: { meal: Meal; slot: "BREAKFAST" | "LUNCH" | "DINNER" | string; className?: string; compact?: boolean }) => (
   <div className={cn(
-    "glass-card p-4 flex flex-col items-center text-center group transition-all duration-300 hover:-translate-y-1 hover:glow-teal",
+    "glass-card card-lift p-4 flex flex-col items-center text-center group",
     className
   )}>
     <div className={cn(
