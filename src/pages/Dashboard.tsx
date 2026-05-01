@@ -14,6 +14,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { SAMPLE_PLAN, type MealPlanData } from "@/lib/meal-data";
+import { getMealImage } from "@/lib/meal-images";
 import {
   LayoutDashboard, Utensils, ShoppingBasket, Users, Activity,
   Settings as SettingsIcon, Bell, Mail, LogOut, Wand2, Plus, Trash2, Check, Loader2, Menu,
