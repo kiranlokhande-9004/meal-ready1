@@ -463,7 +463,7 @@ const FamilySection = ({ family, setFamily, userId }: {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {family.map((m) => (
-            <div key={m.id} className="glass-card p-5 anim-pop">
+            <div key={m.id} className="glass-card card-lift p-5 anim-pop">
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
                   <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-neon-emerald to-neon-teal grid place-items-center text-white font-bold text-lg">
