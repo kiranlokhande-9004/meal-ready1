@@ -195,7 +195,7 @@ const Overview = ({ plan, loading, grocery, setGrocery }: {
 
   return (
     <div className="grid grid-cols-12 gap-4">
-      <div className="col-span-12 lg:col-span-8 glass-card p-5 anim-fade-up">
+      <div className="col-span-12 lg:col-span-8 glass-card card-lift p-6 anim-fade-up">
         <div className="flex items-center justify-between mb-4">
           <p className="text-xs uppercase tracking-widest text-dash-muted font-semibold">My weekly meals</p>
           <span className="text-dash-muted">›</span>
@@ -211,7 +211,7 @@ const Overview = ({ plan, loading, grocery, setGrocery }: {
         )}
       </div>
 
-      <div className="col-span-12 lg:col-span-4 glass-card p-5 anim-fade-up [animation-delay:80ms]">
+      <div className="col-span-12 lg:col-span-4 glass-card card-lift p-6 anim-fade-up [animation-delay:80ms]">
         <p className="text-xs uppercase tracking-widest text-dash-muted font-semibold mb-3">Grocery list</p>
         {top5.length === 0 ? (
           <p className="text-sm text-dash-muted">Generate a plan to populate your list.</p>
@@ -234,7 +234,7 @@ const Overview = ({ plan, loading, grocery, setGrocery }: {
         )}
       </div>
 
-      <div className="col-span-12 glass-card p-5 anim-fade-up [animation-delay:160ms]">
+      <div className="col-span-12 glass-card card-lift p-6 anim-fade-up [animation-delay:160ms]">
         <p className="text-xs uppercase tracking-widest text-dash-muted font-semibold mb-4">Nutrition stats</p>
         {!totals ? (
           <Skeleton className="h-32 rounded-2xl bg-white/5" />
