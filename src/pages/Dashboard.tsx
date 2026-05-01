@@ -337,43 +337,60 @@ const GrocerySection = ({ items, setItems }: { items: GroceryRow[]; setItems: (g
   };
 
   return (
-    <div className="glass-card p-6">
-      <div className="flex items-center justify-between mb-2">
-        <p className="text-xs uppercase tracking-widest text-dash-muted font-semibold">Progress</p>
-        <p className="text-sm text-dash-foreground font-medium">{done}/{items.length}</p>
-      </div>
-      <Progress value={pct} className="h-2 bg-white/5" />
-
-      {items.length === 0 ? (
-        <p className="text-sm text-dash-muted mt-6">Generate a meal plan to build your grocery list.</p>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-          {Object.entries(grouped).map(([cat, list]) => (
-            <div key={cat}>
-              <p className="text-xs uppercase tracking-widest text-neon-teal font-semibold mb-3">{cat}</p>
-              <ul className="space-y-2">
-                {list.map((it) => (
-                  <li key={it.id} className="flex items-center justify-between rounded-xl px-4 py-3 bg-white/[0.03] border border-white/5 hover:border-white/15 transition-colors">
-                    <div>
-                      <p className={cn("text-sm font-medium", it.checked ? "text-dash-muted line-through" : "text-dash-foreground")}>{it.name}</p>
-                      {it.quantity && <p className="text-xs text-dash-muted">{it.quantity}</p>}
-                    </div>
-                    <button
-                      onClick={() => toggle(it.id, !it.checked)}
-                      className={cn(
-                        "h-6 w-6 rounded-md grid place-items-center border transition-all",
-                        it.checked ? "bg-gradient-brand border-transparent text-white scale-110" : "border-white/20 hover:border-white/40"
-                      )}
-                    >
-                      {it.checked && <Check className="h-3.5 w-3.5" />}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+    <div className="space-y-6">
+      <div className="glass-card p-6 md:p-7">
+        <div className="flex items-center justify-between mb-3">
+          <div>
+            <p className="text-xs uppercase tracking-widest text-dash-muted font-semibold">Shopping progress</p>
+            <p className="font-display text-2xl font-bold text-dash-foreground mt-1">
+              {done}<span className="text-dash-muted text-base font-medium"> / {items.length} items</span>
+            </p>
+          </div>
+          <div className="text-right">
+            <p className="font-display text-3xl font-bold text-gradient-brand">{Math.round(pct)}%</p>
+            <p className="text-[11px] text-dash-muted uppercase tracking-widest">complete</p>
+          </div>
         </div>
-      )}
+        <Progress value={pct} className="h-2.5 bg-white/5 [&>div]:bg-gradient-brand" />
+      </div>
+
+      <div className="glass-card p-6 md:p-7">
+        {items.length === 0 ? (
+          <p className="text-sm text-dash-muted">Generate a meal plan to build your grocery list.</p>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-7">
+            {Object.entries(grouped).map(([cat, list]) => {
+              const catDone = list.filter((x) => x.checked).length;
+              return (
+                <div key={cat}>
+                  <div className="flex items-center justify-between mb-3">
+                    <p className="text-xs uppercase tracking-widest text-neon-teal font-semibold">{cat}</p>
+                    <span className="text-[11px] text-dash-muted font-medium">{catDone}/{list.length}</span>
+                  </div>
+                  <ul className="space-y-2">
+                    {list.map((it) => (
+                      <li key={it.id} className="flex items-center justify-between rounded-2xl px-4 py-3 bg-white/[0.03] border border-white/5 hover:border-white/15 hover:bg-white/[0.05] transition-all duration-200">
+                        <div className="min-w-0">
+                          <p className={cn("text-sm font-medium transition-all duration-200", it.checked ? "text-dash-muted line-through" : "text-dash-foreground")}>{it.name}</p>
+                          {it.quantity && <p className="text-xs text-dash-muted mt-0.5">{it.quantity}</p>}
+                        </div>
+                        <button
+                          onClick={() => toggle(it.id, !it.checked)}
+                          aria-pressed={it.checked}
+                          className="check-box btn-press"
+                          data-checked={it.checked}
+                        >
+                          <Check className="h-3 w-3 check-icon" />
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
